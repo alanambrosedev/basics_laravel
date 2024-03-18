@@ -51,14 +51,15 @@ Route::get('send-mail', function () {
     dd('Mail sent!');
 });
 
-Route::get('user-register', function(){
+Route::get('user-register', function () {
     $email = 'user@gmail.com';
     event(new UserRegistered($email));
     dd('Send Mail');
 });
 
 //en ,hi
-Route::get('greeting/{locale}', function($locale){
+Route::get('greeting/{locale}', function ($locale) {
     App::setLocale($locale);
+
     return view('greeting');
 })->name('greeting');

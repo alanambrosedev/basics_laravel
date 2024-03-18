@@ -6,6 +6,5 @@ return [
     'Home' => 'Home',
     'About' => 'About',
     'Contact' => 'Contact',
-    'More' => 'More'
+    'More' => 'More',
 ];
-
