@@ -1,0 +1,1496 @@
+Routing
+=======
+
+Routing in Laravel is a way to direct web traffic to the correct controller and method based on the URL. It's defined in the `routes/web.php` file. Here's a basic example of a route in Laravel:
+
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/greeting', function () {
+    return 'Hello World';
+});
+
+In this example, when a user visits your application's `/greeting` URL, they will receive a "Hello World" response. For more complex routing, you can direct the route to a controller action like this:
+
+
+use App\Http\Controllers\UserController;
+
+Route::get('/user', [UserController::class, 'index']);
+
+This route will call the `index` method of the `UserController` when the `/user` URL is visited. 
+
+Route Parameters
+----------------
+
+Route parameters in Laravel are used to capture segments of the URL within your route. Here's a basic example of how to define and use route parameters:
+
+// Defining a route with a required parameter
+Route::get('/user/{id}', function ($id) {
+    return 'User ID: '.$id;
+});
+
+// Defining a route with an optional parameter
+Route::get('/user/{name?}', function ($name = 'Guest') {
+    return 'User name: '.$name;
+});
+
+In the first example, `{id}` is a required parameter, and in the second example, `{name?}` is an optional parameter with a default value of 'Guest'.
+
+To pass these parameters to a controller, you can use:
+
+// Passing a required parameter to a controller
+Route::get('/user/{id}', 'UserController@show');
+
+// In UserController
+public function show($id)
+{
+    // Use $id to retrieve user information
+}
+
+// Passing an optional parameter to a controller
+Route::get('/user/{name?}', 'UserController@showName');
+
+// In UserController
+public function showName($name = 'Guest')
+{
+    // Use $name to retrieve user information or default to 'Guest'
+}
+
+For more complex scenarios, you can apply constraints to your parameters using regular expressions:
+
+// Applying a regular expression constraint to a parameter
+Route::get('/user/{name}', function ($name) {
+    //
+})->where('name', '[A-Za-z]+');
+
+// Defining multiple parameters with constraints
+Route::get('/user/{id}/{name}', function ($id, $name) {
+    //
+})->where(['id' => '[0-9]+', 'name' => '[a-z]+']);
+
+In the above examples, the `where` method is used to ensure that `id` only contains numbers and `name` only contains lowercase letters.
+
+Naming routes
+-------------
+
+Naming routes in Laravel is a convenient way to reference specific routes throughout your application. Here's how you can name routes and some tips for using them effectively:
+
+You can name a route by chaining the `name` method onto the route definition. This name can then be used to generate URLs or redirects to that specific route.
+
+// Naming a simple route
+Route::get('/user/profile', function () {
+    // Your code here
+})->name('profile');
+
+// Naming a route with a controller action
+Route::get('/user/profile', 'UserProfileController@show')->name('profile.show');
+
+Generating URLs to Named Routes:
+Once you've named a route, you can use the `route` function to generate a URL to that route.
+
+$url = route('profile');
+
+Passing Parameters to Named Routes:
+If your route has parameters, you can pass them as an associative array to the `route` function.
+
+$url = route('user.show', ['id' => 1]);
+
+Tips for Naming Routes:
+- Use a consistent naming convention for your routes, such as `resource.action` (e.g., `user.show`, `order.create`).
+- Group related routes under a common namespace to keep things organized.
+- Use named routes in views and redirects to avoid hardcoding URLs, which makes your code more maintainable.
+
+
+Route Grouping 
+--------------
+
+Route grouping in Laravel allows you to group together routes that share common attributes, such as middleware, namespace, or prefix. Here's an example of how to use route grouping with some useful commands:
+
+Basic Route Grouping:
+You can group routes that should share certain attributes, like middleware or prefixes. Here's a simple example:
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        // Only authenticated users may enter...
+    });
+    Route::get('/account', function () {
+        // Only authenticated users may enter...
+    });
+});
+
+
+Route Prefixes
+--------------
+
+To prefix all routes within the group with a certain URI segment, use the `prefix` method:
+
+Route::prefix('admin')->group(function () {
+    Route::get('/users', function () {
+        // Matches The "/admin/users" URL
+    });
+});
+
+Route Name Prefixes
+-------------------
+
+To prefix the name of all routes within the group, use the `name` method:
+
+Route::name('admin.')->group(function () {
+    Route::get('/users', function () {
+        // Route assigned name "admin.users"...
+    })->name('users');
+});
+
+Nested Route Groups
+-------------------
+
+You can nest groups within groups, and Laravel will intelligently merge attributes:
+
+Route::middleware('web')->group(function () {
+    Route::prefix('admin')->group(function () {
+        Route::name('admin.')->group(function () {
+            Route::get('/dashboard', function () {
+                // Route assigned name "admin.dashboard"...
+            })->name('dashboard');
+        });
+    });
+});
+
+Route Methods
+------------
+
+In Laravel, route methods correspond to the different HTTP verbs and are used to handle incoming requests to your application. Here's a brief overview of the most common route methods with examples:
+
+GET Route
+---------
+
+Used to retrieve data from a specified resource.
+
+Route::get('/products', function () {
+    return 'This is the products page.';
+});
+
+POST Route
+----------
+
+Used to send data to the server to create a new resource.
+
+Route::post('/products', function () {
+    // Code to create a new product
+    return 'Product created successfully.';
+});
+
+PUT/PATCH Route
+---------------
+
+Used to update a resource. `PUT` is typically used to update the entire resource, while `PATCH` is used for partial updates.
+
+Route::put('/products/{id}', function ($id) {
+    // Code to update a product
+    return 'Product updated successfully.';
+});
+
+Route::patch('/products/{id}', function ($id) {
+    // Code to partially update a product
+    return 'Product partially updated successfully.';
+});
+
+DELETE Route
+------------
+
+Used to delete a resource.
+
+Route::delete('/products/{id}', function ($id) {
+    // Code to delete a product
+    return 'Product deleted successfully.';
+});
+
+OPTIONS Route
+-------------
+
+Used to describe the communication options for the target resource.
+
+Route::options('/products', function () {
+    return 'OPTIONS';
+});
+
+Match and Any Methods
+---------------------
+
+The `match` method allows you to register a route that responds to multiple HTTP verbs, and the `any` method registers a route that responds to all HTTP verbs.
+
+Route::match(['get', 'post'], '/products', function () {
+    return 'This route responds to both GET and POST requests.';
+});
+
+Route::any('/products', function () {
+    return 'This route responds to any HTTP verb.';
+});
+
+Fallback Routes
+---------------
+
+In Laravel, a fallback route is a route that catches all requests that don't match any other routes. It's commonly used to handle 404 errors or as a catch-all endpoint. Here's an example of how to define a fallback route:
+
+// Define your routes normally
+
+// At the end of your web.php file, define the fallback route
+Route::fallback(function () {
+    return response()->json(['message' => 'Resource not found'], 404);
+});
+
+In this example, any request that doesn't match a defined route will be caught by the fallback route, which returns a JSON response with a 404 status code.
+
+To create a controller for a more complex fallback logic, you can use the Artisan command:
+
+php artisan make:controller FallbackController
+
+Then, define the fallback route to use this controller:
+
+// At the end of your web.php file, define the fallback route using a controller
+Route::fallback('FallbackController@index');
+
+In the `FallbackController`, you can define the `index` method to handle the logic for unmatched routes:
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class FallbackController extends Controller
+{
+    public function index()
+    {
+        // Your custom logic
+        return view('errors.404'); // Or return a custom response
+    }
+}
+
+Remember to place the fallback route at the end of your routes file, so it doesn't preempt any other route definitions. 
+
+Templates & Views
+=================
+
+Laravel view
+------------
+
+In Laravel, views are an integral part of the MVC (Model-View-Controller) architecture. The “View” in MVC stands for the data that is going to be displayed to the user on their browser. Views are responsible for rendering the HTML or other types of response that is sent back to the client. They provide a way to separate the presentation logic from the application’s business logic.
+Laravel uses a powerful templating engine called Blade. The extension for this file used here is filename.blade.php. Blade allows you to write clean and expressive PHP code within your HTML templates.
+Here’s a detailed explanation of Laravel views with examples:
+Creating a View To create a view, you can simply create a new file with the .blade.php extension. For example, let’s create a view called welcome.blade.php:
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome</title>
+</head>
+<body>
+<h1>Welcome, {{ $name }}</h1>
+</body>
+</html>
+
+Rendering a View To render a view, you can use the view() helper function. For example:
+use Illuminate\Support\Facades\View;
+
+public function showWelcome() {
+    $name = 'John Doe';
+    return view('welcome', compact('name'));
+}
+
+Passing Data to Views You can pass data to views by passing an associative array as the second parameter to the view() function. For example:
+$data = [
+    'name' => 'John Doe',
+    'email' => 'john@example.com',
+];
+return view('welcome', $data);
+
+Blade Templating Engine Blade provides a range of directives and control structures that make it easy to handle common tasks in your views. Some commonly used directives include @if, @else, @foreach, @for, @while, @switch, @include, @extends, and more.
+Here’s an example of using conditionals and loops in a Blade template:
+
+@if ($condition)
+<p>This condition is true.</p>
+@else
+<p>This condition is false.</p>
+@endif
+
+@foreach ($items as $item)
+<p>{{ $item }}</p>
+@endforeach
+
+In this example, the @if and @else directives are used for conditional statements, and the @foreach directive is used for looping through an array of items2. The {{ $item }} syntax is used to output the value of each item.
+
+Passing & rendering data in templates & views
+---------------------------------------------
+
+In Laravel, you can pass data from a controller to a view in several ways. Here are some examples:
+
+1. Using the view() function:
+You can pass data to a view using the view() function. The first parameter is the name of the view, and the second parameter is an associative array where the keys are the variable names that will be available in the view.
+Route::get('/', function () {
+    return view('greeting', ['name' => 'Alex']);
+});
+
+In the above example, the greeting view will have access to a $name variable with the value 'Alex’.
+
+2. Using the with() method:
+The with() method allows you to attach individual pieces of data to the view.
+Route::get('/', function () {
+    $articleName = 'Article 1';
+    return view('greeting')->with('articleName', $articleName)->with('articlePublished', 'On GeeksforGeeks');
+});
+
+In this example, the greeting view will have access to $articleName and $articlePublished variables.
+
+3. Using the compact() function:
+
+The compact() function can be used to pass an array of data to the view1.
+Route::get('/', function () {
+    $name = 'Alex';
+    $email = 'alex@example.com';
+    return view('greeting', compact('name', 'email'));
+});
+
+In this example, the greeting view will have access to $name and $email variables.
+
+Rendering Data in the View:
+
+Once the data is passed to the view, you can display it using Blade syntax.
+<!-- Stored in resources/views/greeting.blade.php -->
+<h1>Hello, {{ $name }}</h1>
+<p>Email: {{ $email }}</p>
+
+In this example, the {{ $name }} and {{ $email }} syntax is used to output the value of the $name and $email variables.
+
+Loop in templates & conditional rendering
+-----------------------------------------
+
+In Laravel’s Blade templating engine, you can use loops and conditional statements to control the flow of your templates. Here’s how you can use them:
+Loops in Blade Templates:
+
+For Loop
+--------
+
+@for ($i = 0; $i < 10; $i++)
+    The current value is {{ $i }}
+@endfor
+
+Foreach Loop
+------------
+
+@foreach ($users as $user)
+    <p>This is user {{ $user->id }}</p>
+@endforeach
+
+Forelse Loop
+------------
+
+ This is a convenient shortcut for a common use case of the foreach loop, where you need to check if the array is empty before starting the loop.
+ 
+@forelse ($users as $user)
+    <li>{{ $user->name }}</li>
+@empty
+    <p>No users</p>
+@endforelse
+
+While Loop
+----------
+
+@while (true)
+    <p>I'm looping forever.</p>
+@endwhile
+
+Conditional Rendering in Blade Templates
+----------------------------------------
+
+If Statement
+------------
+
+@if ($condition)
+    <p>This condition is true.</p>
+@else
+    <p>This condition is false.</p>
+@endif
+
+Unless Statement
+----------------
+
+This is the opposite of the if statement. It will execute the block of code if the condition is false.
+
+@unless ($condition)
+    <p>This condition is false.</p>
+@endunless
+
+Switch Statement
+----------------
+
+@switch($i)
+    @case(1)
+        First case...
+        @break
+
+    @case(2)
+        Second case...
+        @break
+    @default
+        Default case...
+@endswitch
+
+Remember, while iterating through a foreach loop, you may use the $loop variable to gain valuable information about the loop. For example:
+
+@foreach ($users as $user)
+    @if ($loop->first)
+        This is the first iteration.
+    @endif
+    @if ($loop->last)
+        This is the last iteration.
+    @endif
+    <p>This is user {{ $user->id }}</p>
+@endforeach
+
+Sub views
+---------
+
+In Laravel, you can create sub-views to help organize your views and reuse common parts of your application’s UI. Sub-views are just regular views that are included within other views. Here’s how you can use them:
+
+Creating a Sub-View:
+You can create a sub-view just like you would create a regular view. For example, let’s create a sub-view called header.blade.php in a new directory called subviews:
+<!-- Stored in resources/views/subviews/header.blade.php -->
+<header>
+    <h1>Welcome to My Website</h1>
+</header>
+
+Including a Sub-View:
+
+You can include a sub-view in another view using the @include directive. The @include directive allows you to include a Blade view from within another view. All variables that are available to the parent view will be made available to the included view.
+<!-- Stored in resources/views/welcome.blade.php -->
+<html>
+<body>
+    @include('subviews.header')
+    <p>Welcome, {{ $name }}</p>
+</body>
+</html>
+
+In this example, the welcome view includes the header sub-view. The @include directive is followed by the name of the view to include. If the view is stored in a sub-directory, you can use . to access it.
+
+Passing Additional Data to Sub-Views:
+You can also pass additional data to the sub-view when including it:
+
+@include('subviews.header', ['title' => 'My Website'])
+
+In this example, the header sub-view will have access to a $title variable.
+
+Blade directives
+----------------
+
+Blade directives are a powerful feature of Laravel’s Blade templating engine. They provide a way to define custom syntax that you can use in your Blade templates. Here are some commonly used Blade directives:
+
+1. @if, @elseif, @else, and @endif: These directives allow you to perform conditional statements.
+
+@if ($condition)
+    // The condition is true
+@elseif ($otherCondition)
+    // The other condition is true
+@else
+    // Neither condition is true
+@endif
+
+2. @unless: This directive is the opposite of @if. It will execute the block of code if the condition is false.
+
+@unless ($condition)
+    // The condition is false
+@endunless
+
+3. @for, @foreach, @forelse, and @while: These directives allow you to perform loops.
+
+@for ($i = 0; $i < 10; $i++)
+    // This block will run 10 times
+@endfor
+
+@foreach ($users as $user)
+    // This block will run for each user
+@endforeach
+
+@forelse ($users as $user)
+    // This block will run for each user
+@empty
+    // This block will run if the users array is empty
+@endforelse
+
+@while (true)
+    // This block will run indefinitely
+@endwhile
+
+4. @switch, @case, @break, and @default: These directives allow you to perform switch statements.
+
+@switch($i)
+    @case(1)
+        // This block will run if $i is 1
+        @break
+
+    @case(2)
+        // This block will run if $i is 2
+        @break
+
+    @default
+        // This block will run if $i is neither 1 nor 2
+@endswitch
+
+5. @include: This directive allows you to include a sub-view from within another view.
+
+@include('view.name', ['some' => 'data'])
+
+6. @extends and @section: These directives are used for creating layouts.
+
+// In the child view
+@extends('layouts.app')
+
+@section('title', 'Page Title')
+
+@section('content')
+    <p>This is my body content.</p>
+@endsection
+
+Controllers
+===========
+
+Form Markup
+-----------
+
+In Laravel, form markup is typically handled in Blade views, not in controllers. However, controllers play a crucial role in handling form data and passing it to views.
+
+Here's an example of how you might handle form data in a controller and pass it to a view:
+
+1. Creating a Form in a Blade View:
+
+First, you would create a form in a Blade view. Here's an example of a simple form for creating a new task:
+
+<!-- Stored in resources/views/tasks/create.blade.php -->
+<form method="POST" action="/tasks">
+    @csrf
+    <label for="name">Task Name:</label>
+    <input type="text" id="name" name="name">
+    <input type="submit" value="Create Task">
+</form>
+
+In this example, the form has a single text input for the task name and a submit button. The `@csrf` directive is a security feature that protects against cross-site request forgery.
+
+2. Handling Form Data in a Controller:
+
+Next, you would create a controller method to handle the form submission. Here's an example:
+
+// Stored in app/Http/Controllers/TaskController.php
+public function store(Request $request)
+{
+    $task = new Task;
+    $task->name = $request->name;
+    $task->save();
+
+    return redirect('/tasks');
+}
+
+In this example, the `store` method creates a new `Task` object, sets its `name` property to the value of the `name` input from the form, saves the `Task` object to the database, and then redirects the user back to the list of tasks.
+
+3. Defining Routes:
+
+Finally, you would define routes in your `routes/web.php` file to display the form and handle the form submission:
+
+// Stored in routes/web.php
+Route::get('/tasks/create', 'TaskController@create');
+Route::post('/tasks', 'TaskController@store');
+
+In this example, the first route displays the form to the user, and the second route handles the form submission.
+
+Form csrf token explanation
+---------------------------
+
+In Laravel, Cross-Site Request Forgery (CSRF) tokens are used to protect your application from CSRF attacks. A CSRF attack occurs when a malicious website contains a link, a form button or some JavaScript that is intended to perform some action on your website, using the credentials of a logged-in user who visits the malicious site in their browser.
+
+A CSRF token is a unique, random value associated with a user's session. Laravel automatically generates a CSRF token for each active user session, and this token is used to verify that the authenticated user is the one actually making the requests to the application.
+
+When creating forms in Laravel, you should include a hidden CSRF token field in the form so that the CSRF protection middleware can validate the request. You can use the `@csrf` Blade directive to generate the token input field.
+
+Here's an example of how you might create a form with a CSRF token:
+
+<!-- Stored in resources/views/form.blade.php -->
+<form method="POST" action="/profile">
+    @csrf
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name">
+    <input type="submit" value="Submit">
+</form>
+
+In this example, the `@csrf` directive is used to generate a hidden input field containing the CSRF token. When the form is submitted, Laravel's CSRF protection middleware will automatically verify that the token in the request input matches the token stored in the session.
+
+If the tokens do not match, the request is considered to be a potential CSRF attack and Laravel will respond with a `TokenMismatchException`.
+
+Input field validation
+----------------------
+
+In Laravel, input validation is an important aspect of handling user input in forms. Laravel provides several different ways to validate your application's incoming data.
+
+Here's an example of how you might handle form data validation in Laravel:
+
+1. Creating a Form in a Blade View:
+
+First, you would create a form in a Blade view. Here's an example of a simple form for creating a new blog post:
+
+<!-- Stored in resources/views/post/create.blade.php -->
+<form method="POST" action="/post">
+    @csrf
+    <label for="name">Post Title:</label>
+    <input type="text" id="title" name="title">
+    <input type="submit" value="Create Post">
+</form>
+
+2. Handling Form Data in a Controller:
+
+Next, you would create a controller method to handle the form submission. Here's an example:
+
+// Stored in app/Http/Controllers/PostController.php
+public function store(Request $request)
+{
+    $validatedData = $request->validate([
+        'title' => 'required|max:255',
+    ]);
+
+    // The blog post is valid, store in database...
+}
+
+In this example, the `store` method uses the `validate` method on the incoming HTTP request. The `validate` method accepts an array of validation rules. In this case, we are validating that the `title` field is required and its maximum length is 255 characters.
+
+If the validation rules pass, your code will keep executing normally. However, if validation fails, an exception will be thrown and the proper error response will automatically be sent back to the user.
+
+In the `validate` method, you may also specify custom error messages for each attribute:
+
+$validatedData = $request->validate([
+    'title' => 'required|max:255',
+], [
+    'title.required' => 'The title field is required',
+    'title.max' => 'The title may not be greater than 255 characters',
+]);
+
+3. Displaying Validation Errors in the View:
+
+If validation fails, Laravel will automatically redirect the user back to their previous location. All of the validation errors will automatically be flashed to the session.
+
+You can display these errors in the view using the `@error` Blade directive:
+
+<!-- Stored in resources/views/post/create.blade.php -->
+<form method="POST" action="/post">
+    @csrf
+    <label for="name">Post Title:</label>
+    <input type="text" id="title" name="title">
+    @error('title')
+        <div class="alert alert-danger">{{ $message }}</div>
+    @enderror
+    <input type="submit" value="Create Post">
+</form>
+
+In this example, if there are any validation errors for the `title` field, they will be displayed in an alert box.
+
+In Laravel, validation rules are used to ensure that incoming data adheres to certain criteria¹. Laravel provides a variety of built-in validation rules that you can use in your applications. Here are some commonly used validation rules:
+
+1. `required`: The field under validation must be present in the input data and not empty.
+
+$request->validate([
+    'title' => 'required|max:255',
+]);
+
+2. `max`: The field under validation must have a maximum value. For string data, value corresponds to the maximum number of characters. For numeric data, value corresponds to a maximum integer.
+
+$request->validate([
+    'title' => 'required|max:255',
+]);
+
+3. `min`: The field under validation must have a minimum value. For string data, value corresponds to the minimum number of characters. For numeric data, value corresponds to a minimum integer.
+
+$request->validate([
+    'password' => 'required|min:8',
+]);
+
+4. `unique`: The field under validation must be unique in a given database table.
+
+$request->validate([
+    'email' => 'required|email|unique:users',
+]);
+
+5. `email`: The field under validation must be formatted as an e-mail address.
+
+$request->validate([
+    'email' => 'required|email|unique:users',
+]);
+
+6. `confirmed`: The field under validation must have a matching field of `foo_confirmation`. For example, if the field under validation is `password`, a matching `password_confirmation` field must be present in the input.
+
+$request->validate([
+    'password' => 'required|confirmed',
+]);
+
+7. `exists`: The field under validation must exist on a given database table.
+
+$request->validate([
+    'email' => 'required|email|exists:users',
+]);
+
+8. `regex`: The field under validation must match the given regular expression.
+
+$request->validate([
+    'password' => ['required', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/'],
+]);
+
+In Laravel, you can overwrite the default validation rules by customizing the error messages in your application¹². Here's how you can do it:
+
+1. Overriding the Default Message:
+
+One way is to change the validation message template across the entire system. To do that, navigate to your Laravel project, and open the file `/resources/lang/en/validation.php`. This file contains all validation messages in the framework.
+
+Let's take an example, you want to modify the `required_if` validation message, by default it looks like this:
+
+'required_if' => 'The :attribute field is required when :other is :value.'
+
+To modify it, you can just replace the value²:
+
+'required_if' => ':attribute must be set when :other is equal to :value.'
+
+
+As a result, all `required_if` rules will use this template when the validation fails.
+
+2. Overriding Messages for a Specific Request:
+
+There are cases when you want to override the message for a specific rule, but you want to keep the default messages as is. To do that, you have a few options:
+
+When using a form request class:
+
+This is the easiest, when you're using a form request for the validations, you can override the `messages` method, and in the method, you return an associative array where the key represents the rule, and the value represents the message.
+
+As an example:
+
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class CreateUserRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'email'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email' => 'This must be a valid email!',
+        ];
+    }
+}
+
+Here when the validation fails for any `email` rule, the overridden message will be used.
+
+When using a validator:
+
+In this case, you'll be using the same array that you created in the previous example, but you'll directly use it in the `Validator::make()` method.
+
+So to cover the same example as above:
+
+<?php
+
+$rules = [
+    'email' => ['required', 'email'],
+];
+
+$messages = [
+    'email' => 'This must be a valid email!',
+];
+
+$validator = Validator::make(request()->all(), $rules, $messages);
+
+if ($validator->fails()) {
+    return $validator->errors();
+}
+
+
+When using `$request->validate()` or `$this->validate()`:
+
+The same rules apply for this method as the Validator method, so you'll be creating `$rules` and `$messages` arrays and passing them to the `validate()` method.
+
+
+Form Validation Request Class
+-----------------------------
+
+In Laravel, Form Request classes are a way to encapsulate the logic of form data validation and authorization. They provide a convenient way to validate incoming HTTP request with a variety of powerful validation rules.
+
+Here's a step-by-step guide on how to use Form Request classes in Laravel:
+
+1. Creating a Form Request Class:
+
+You can create a Form Request class using the `make:request` Artisan command. This command will generate a new Form Request class in the `app/Http/Requests` directory.
+
+php artisan make:request StoreBlogPost
+
+This command will create a class named `StoreBlogPost` in the `app/Http/Requests` directory.
+
+2. Writing the Validation Rules:
+
+The generated Form Request class contains two methods: `authorize` and `rules`.
+
+The `authorize` method is where you determine if the user is authorized to make this request. If the method returns `true`, the validation proceeds. If it returns `false`, a HTTP response with a 403 status code is automatically sent.
+
+public function authorize()
+{
+    return true;
+}
+
+The `rules` method is where you define your validation rules. For example, let's say a blog post requires a unique title, content, and a category:
+
+public function rules()
+{
+    return [
+        'title' => 'required|unique:posts|max:255',
+        'content' => 'required',
+        'category' => 'required',
+    ];
+}
+
+3. Using the Form Request:
+
+To use the Form Request, you can type-hint it in your controller method. Laravel will automatically validate the incoming request using your Form Request before the controller method is called.
+
+public function store(StoreBlogPost $request)
+{
+    // The incoming request is valid...
+    // Retrieve the validated input data...
+    $validated = $request->validated();
+}
+
+In this case, Laravel will validate the POST request data based on the `rules` method in the `StoreBlogPost` Form Request.
+
+4. Customizing Error Messages:
+
+You can customize the error messages for each attribute by adding a `messages` method to your Form Request class:
+
+public function messages()
+{
+    return [
+        'title.required' => 'A title is required',
+        'content.required'  => 'Content is required',
+        'category.required'  => 'A category is required',
+    ];
+}
+
+In this example, if there are any validation errors for the `title`, `content`, or `category` fields, the custom messages will be used¹.
+
+Form Request Validation in Laravel provides a clean and convenient way to validate incoming HTTP requests. This approach improves code organization by separating validation logic from controller code, making the application easier to maintain and understand.
+
+Database Migrations
+-------------------
+
+In Laravel, migrations are like version control for your database, allowing your team to define and share the application's database schema definition. Here's a step-by-step guide on how to create migrations in Laravel:
+
+1. Creating a Migration:
+
+To create a new migration, you can use the Artisan CLI provided by Laravel. Open your terminal and navigate to your Laravel project directory. Run the following command:
+
+php artisan make:migration create_users_table
+
+This command creates a new migration file for a users table in the `database/migrations` directory.
+
+2. Defining the Migration:
+
+Open the newly created migration file. You will see two methods: `up()` and `down()`.
+
+In the `up()` method, define the table’s columns and constraints¹. For example:
+
+
+public function up()
+{
+    Schema::create('users', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('email')->unique();
+        $table->timestamp('email_verified_at')->nullable();
+        $table->string('password');
+        $table->rememberToken();
+        $table->timestamps();
+    });
+}
+
+The `down()` method is used to rollback the migration. Usually, it reverses the operations performed in the `up()` method:
+
+public function down()
+{
+    Schema::dropIfExists('users');
+}
+
+3. Running the Migration:
+
+To execute the migration, run the following command:
+
+php artisan migrate
+
+
+This command runs all outstanding migrations, creating the users table in your database.
+
+4. Rolling Back a Migration:
+
+If you need to undo a migration, Laravel provides a rollback feature. Execute:
+
+php artisan migrate:rollback
+
+This command will call the `down()` method of the latest batch of migrations.
+
+Table data types
+----------------
+
+In Laravel, when creating migrations, you can specify the data type of your columns. Laravel's schema builder supports a variety of column types. Here are some commonly used column types:
+
+1. `string`:The `string` method creates a `VARCHAR` equivalent column with a length.
+
+$table->string('name', 100);
+
+2. `text`:The `text` method creates a `TEXT` equivalent column.
+
+$table->text('description');
+
+3. `integer`:The `integer` method creates an `INTEGER` equivalent column.
+
+$table->integer('votes');
+
+4. `bigInteger`:The `bigInteger` method creates a `BIGINT` equivalent column.
+
+$table->bigInteger('votes');
+
+5. `unsignedBigInteger`:The `unsignedBigInteger` method creates an unsigned `BIGINT` equivalent column.
+
+$table->unsignedBigInteger('votes');
+
+6. `float`:The `float` method creates a `FLOAT` equivalent column with a precision and scale.
+
+$table->float('amount', 8, 2);
+
+
+7. `decimal`: The `decimal` method creates a `DECIMAL` equivalent column with a precision and scale.
+
+$table->decimal('amount', 8, 2);
+
+8. `boolean`:The `boolean` method creates a `BOOLEAN` equivalent column.
+
+$table->boolean('confirmed');
+
+
+9. `date`: The `date` method creates a `DATE` equivalent column.
+
+$table->date('created_at');
+
+10. `timestamp`: The `timestamp` method creates a `TIMESTAMP` equivalent column.
+
+$table->timestamp('added_on');
+
+
+11. `timestamps`: The `timestamps` method creates `created_at` and `updated_at` columns.
+
+$table->timestamps();
+
+12. `softDeletes`: The `softDeletes` method creates a `deleted_at` column for soft deletes.
+
+$table->softDeletes();
+
+Important migration commands
+----------------------------
+
+In Laravel, migrations are like version control for your database, allowing your team to define and share the application's database schema definition. Here are some important migration commands in Laravel:
+
+1. `php artisan make:migration`:
+
+This command is used to generate a new migration file¹. For example, to create a new table called `users`, you would run:
+
+php artisan make:migration create_users_table --create=users
+
+2. `php artisan migrate`:
+
+This command runs all of your outstanding migrations. These are migrations that have been created but not yet run. For example:
+
+php artisan migrate
+
+3. `php artisan migrate:rollback`:
+
+This command rolls back the last "batch" of migrations, which may include multiple migration files¹. For example:
+
+php artisan migrate:rollback
+
+4.`php artisan migrate:status`:
+
+This command shows the status of all your migrations, including which have run and which are still outstanding. For example:
+
+php artisan migrate:status
+
+5. `php artisan migrate:reset`:
+
+This command rolls back all of your application's migrations. For example:
+
+php artisan migrate:reset
+
+6. `php artisan migrate:refresh`:
+
+This command rolls back all of your migrations and then runs them again¹. This command effectively recreates your entire database. For example:
+
+php artisan migrate:refresh
+
+7. `php artisan migrate:fresh`:
+
+This command drops all tables from the database and then runs all of your migrations. This command is similar to `migrate:refresh` but instead of just rolling back your migrations, it drops all tables. For example:
+
+php artisan migrate:fresh
+
+
+8. `php artisan migrate:install`:
+
+This command is used to create the migrations table in the database. This table is used to keep track of which migrations have been run². You only need to run this command once when setting up your project. To use this command, run:
+
+php artisan migrate:install
+
+9. `php artisan migrate --pretend`:
+
+The `migrate --pretend` option is used to show which migrations will be run without actually running them. This can be useful if you want to see what will happen before actually making any changes to your database. To use this option, run:
+
+php artisan migrate --pretend
+
+10. `php artisan migrate --force`:
+
+The `migrate --force` option is used to run all outstanding database migrations without prompting for confirmation. This can be useful for running migrations in automated scripts or for quickly updating a development database. To use this option, run:
+
+php artisan migrate --force
+
+Adding new column to existing table
+-----------------------------------
+
+In Laravel, you can add columns to an existing table by creating a new migration. Here's how you can do it:
+
+1. Creating a New Migration:
+
+To add a new column to an existing table, you first need to create a new migration. You can do this using the `make:migration` Artisan command. For example, to add a new column to the `posts` table, you might run:
+
+php artisan make:migration add_slug_to_posts_table --table=posts
+
+This command will create a new migration file in the `database/migrations` directory.
+
+2. Adding the New Column:
+
+Next, you'll need to define the new column in your migration file. You can do this in the `up` method of the migration. For example, to add a `slug` column to the `posts` table, you might write:
+
+public function up()
+{
+    Schema::table('posts', function (Blueprint $table) {
+        $table->string('slug');
+    });
+}
+
+In this example, the `Schema::table` method is used to indicate that you want to update an existing table. The `Blueprint $table` variable is used to define the new column.
+
+If you need to change the order of the new column, you can use `->after('column_name')`. For example, if you need the `slug` column after the `title` column, you can use something like below:
+
+public function up()
+{
+    Schema::table('posts', function (Blueprint $table) {
+        $table->string('slug')->after('title');
+    });
+}
+
+3. Running the Migration:
+
+Finally, you can apply the changes to your database by running the migration. You can do this using the `migrate` Artisan command:
+
+php artisan migrate
+
+This command will run any outstanding migrations, including the one you just created.
+
+public function up()
+{
+    Schema::table('posts', function (Blueprint $table) {
+        $table->string('slug')->default('');
+    });
+}
+
+Overview & seeding fake data
+----------------------------
+
+In Laravel, seeding is the process of populating your database with data. This can be useful for testing, or when you need to provide some initial data for your application to work with. Laravel provides several tools to help with this, including Factories and the Faker library.
+
+Factories:
+
+Factories are classes that allow you to generate large amounts of database records. Here's an example of a factory:
+
+// database/factories/UserFactory.php
+$factory->define(App\User::class, function (Faker $faker) {
+    return [
+        'name' => $faker->name,
+        'email' => $faker->unique()->safeEmail,
+        'password' => bcrypt('password'),
+        'remember_token' => Str::random(10),
+    ];
+});
+
+In this example, the factory defines a set of default values for the `User` model using the Faker library¹.
+
+Faker:
+
+Faker is a PHP library that generates fake data. It's used in Laravel to generate data for seeding. Here's an example of how you might use Faker in a factory:
+
+$factory->define(App\User::class, function (Faker $faker) {
+    return [
+        'name' => $faker->name,
+        'email' => $faker->unique()->safeEmail,
+    ];
+});
+
+In this example, Faker generates a random name and a unique email address.
+
+Seeding:
+
+Once you've defined your factories, you can use them to generate data in your database seeds. Here's an example of a database seed class:
+
+// database/seeds/DatabaseSeeder.php
+use App\User;
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    public function run()
+    {
+        factory(User::class, 50)->create();
+    }
+}
+
+In this example, the `run` method creates 50 users using the `User` factory.
+
+To run your seeds, you can use the `db:seed` Artisan command:
+
+php artisan db:seed
+
+This command runs the `DatabaseSeeder` class, which in turn creates 50 users.
+
+
+Database Query builder
+----------------------
+
+Laravel's database query builder provides a convenient, fluent interface to creating and running database queries. It can be used to perform most database operations in your application and works perfectly with all of Laravel's supported database systems.
+
+Here are some basic examples of how you can use the Query Builder in Laravel:
+
+Retrieving All Rows From A Table
+--------------------------------
+
+use Illuminate\Support\Facades\DB;
+
+$users = DB::table('users')->get();
+
+foreach ($users as $user) {
+    echo $user->name;
+}
+
+In this example, the `get` method returns an `Illuminate\Support\Collection` instance containing the results of the query where each result is an instance of the PHP `stdClass` object.
+
+Retrieving A Single Row / Column From A Table
+---------------------------------------------
+
+use Illuminate\Support\Facades\DB;
+
+$user = DB::table('users')->where('name', 'John')->first();
+
+return $user->email;
+
+In this example, the `first` method will return a single `stdClass` object.
+
+Remember, Laravel's query builder uses PDO parameter binding to protect your application against SQL injection attacks. There is no need to clean strings passed to the query builder.
+
+Retrieving data from database table
+-----------------------------------
+
+Retrieving All Rows From A Table
+
+use Illuminate\Support\Facades\DB;
+
+$users = DB::table('users')->get();
+
+foreach ($users as $user) {
+    echo $user->name;
+}
+
+In this example, the `get` method returns an `Illuminate\Support\Collection` instance containing the results of the query where each result is an instance of the PHP `stdClass` object.
+
+Retrieving A Single Row / Column From A Table
+---------------------------------------------
+
+use Illuminate\Support\Facades\DB;
+
+$user = DB::table('users')->where('name', 'John')->first();
+
+return $user->email;
+
+In this example, the `first` method will return a single `stdClass` object.
+
+Retrieving Specific Columns
+---------------------------
+
+use Illuminate\Support\Facades\DB;
+
+$users = DB::table('users')->select('name', 'email')->get();
+
+In this example, the `select` method allows you to specify custom select columns.
+
+Retrieving A List Of Column Values
+---------------------------------
+
+use Illuminate\Support\Facades\DB;
+
+$titles = DB::table('roles')->pluck('title');
+
+In this example, the `pluck` method retrieves all of the values for a given column.
+
+Remember, Laravel's query builder uses PDO parameter binding to protect your application against SQL injection attacks. There is no need to clean strings passed to the query builder.
+
+Sure, I can provide an example of how you can retrieve a list of column values in Laravel.
+
+In Laravel, you can use the `pluck` method to retrieve all of the values for a single column from the database. This method will return an `Illuminate\Support\Collection` instance with the values of the specified column.
+
+Here is an example:
+
+use Illuminate\Support\Facades\DB;
+
+$titles = DB::table('users')->pluck('title');
+
+foreach ($titles as $title) {
+    echo $title;
+}
+
+In this example, we are retrieving all of the `title` values from the `users` table.
+
+If you want to retrieve a list of column values based on a specific condition, you can use the `where` method before the `pluck` method. Here is an example:
+
+use Illuminate\Support\Facades\DB;
+
+$activeUserEmails = DB::table('users')->where('status', 'active')->pluck('email');
+
+foreach ($activeUserEmails as $email) {
+    echo $email;
+}
+
+Using Where condition
+---------------------
+
+In this example, we are retrieving all of the `email` values from the `users` table where the `status` is `active`.
+
+Remember, Laravel's query builder uses PDO parameter binding to protect your application against SQL injection attacks. There is no need to clean strings passed to the query builder.
+
+In Laravel, the `where` method is used to add basic where clauses to the query. The `where` method accepts three arguments: the column name, an operator, and the value to compare against.
+
+Here are some examples:
+
+Basic Usage of Where
+
+use Illuminate\Support\Facades\DB;
+
+$users = DB::table('users')->where('votes', '>', 100)->get();
+
+In this example, all users that have more than 100 votes are retrieved.
+
+Multiple Where Conditions
+
+use Illuminate\Support\Facades\DB;
+
+$users = DB::table('users')->where('votes', '>', 100)->where('name', 'John')->get();
+
+In this example, all users that have more than 100 votes and whose name is John are retrieved.
+
+Or Where Conditions
+
+use Illuminate\Support\Facades\DB;
+
+$users = DB::table('users')->where('votes', '>', 100)->orWhere('name', 'John')->get();
+
+In this example, all users that have more than 100 votes or whose name is John are retrieved.
+
+Conditional Clauses
+You can use conditional clauses in Laravel to construct a query based on the truthiness of another condition. Here's an example:
+
+use Illuminate\Support\Facades\DB;
+
+$role_id = 2;
+
+$results = DB::table('users')->where('status', 'active')
+    ->when($role_id == 2, function ($query) {
+        return $query->where('role_id', 2);
+    })->get();
+
+In this example, if `$role_id` is 2, then the query will only return active users with a role_id of 2.
+
+Remember, Laravel's query builder uses PDO parameter binding to protect your application against SQL injection attacks. There is no need to clean strings being passed as bindings.
+
+Insert data in DB
+-----------------
+
+In Laravel, you can use the `insert` method to insert data into the database. This method accepts an array of column names and values.
+
+Here is a basic example:
+
+use Illuminate\Support\Facades\DB;
+
+DB::table('users')->insert(
+    ['email' => 'john@example.com', 'votes' => 0]
+);
+
+In this example, a new record is inserted into the `users` table.
+
+Inserting Multiple Records
+
+You can also insert multiple records into the table with a single call to `insert` by passing an array of arrays. Each array represents a row to be inserted into the table.
+
+Here is an example:
+
+use Illuminate\Support\Facades\DB;
+
+DB::table('users')->insert([
+    ['email' => 'taylor@example.com', 'votes' => 0],
+    ['email' => 'dayle@example.com', 'votes' => 0]
+]);
+
+In this example, two new records are inserted into the `users` table.
+
+Auto-Incrementing IDs
+
+If the table has an auto-incrementing id, use the `insertGetId` method to insert a record and then retrieve the ID:
+
+
+use Illuminate\Support\Facades\DB;
+
+$id = DB::table('users')->insertGetId(
+    ['email' => 'john@example.com', 'votes' => 0]
+);
+
+In this example, a new record is inserted into the `users` table and the ID of the new record is retrieved.
+
+Remember, Laravel's query builder uses PDO parameter binding to protect your application against SQL injection attacks. There is no need to clean strings being passed as bindings.
+
+Delete Data in DB
+-----------------
+
+In Laravel, you can use the `delete` method to delete existing records in the database. This method is typically used in conjunction with the `where` method to specify the condition for the delete operation.
+
+Here is a basic example:
+
+use Illuminate\Support\Facades\DB;
+
+DB::table('users')
+    ->where('id', 1)
+    ->delete();
+
+In this example, the user with an `id` of 1 is deleted from the `users` table.
+
+Deleting Multiple Records
+
+You can also delete multiple records in the table with a single call to `delete` by adding more conditions. Here is an example:
+
+
+use Illuminate\Support\Facades\DB;
+
+DB::table('users')
+    ->where('votes', '<', 100)
+    ->delete();
+
+In this example, all users that have less than 100 votes are deleted from the `users` table.
+
+Deleting All Records From A Table
+
+If you want to delete all records from a table, you can use the `truncate` method:
+
+use Illuminate\Support\Facades\DB;
+
+DB::table('users')->truncate();
+
+In this example, all records from the `users` table are deleted.
+
+Remember, Laravel's query builder uses PDO parameter binding to protect your application against SQL injection attacks. There is no need to clean strings being passed as bindings.
+
+Basic join statement
+--------------------
+
+In Laravel, you can use the `join` method to perform a basic "inner join" between two or more tables. The first argument passed to the `join` method is the name of the table you need to join to, while the remaining arguments specify the column constraints for the join.
+
+Here is a basic example:
+
+use Illuminate\Support\Facades\DB;
+
+$users = DB::table('users')
+    ->join('orders', 'users.id', '=', 'orders.user_id')
+    ->select('users.*', 'orders.price')
+    ->get();
+
+In this example, we are joining the `users` table with the `orders` table where the `id` of the user matches the `user_id` on the orders. We then select all columns from the `users` table and the `price` column from the `orders` table.
+
+Joining Multiple Tables
+
+You can also join multiple tables together. Here is an example:
+
+use Illuminate\Support\Facades\DB;
+
+$data = DB::table('orders')
+    ->join('users', 'users.id', '=', 'orders.user_id')
+    ->join('products', 'products.id', '=', 'orders.product_id')
+    ->select('orders.*', 'users.name', 'products.title')
+    ->get();
+
+In this example, we are joining the `orders` table with both the `users` and `products` tables and selecting data from all three.
+
+Remember, Laravel's query builder uses PDO parameter binding to protect your application against SQL injection attacks. There is no need to clean strings being passed as bindings.
+
+Aggregates
+----------
+
+In Laravel, aggregate functions are used to perform operations on a set of values to return a single scalar value. They are often used with the `DB::raw` method in the query builder.
+
+Here are some examples:
+
+Count
+
+use Illuminate\Support\Facades\DB;
+
+$count = DB::table('users')->count();
+
+In this example, the `count` method returns the total number of records in the `users` table.
+
+Max
+
+use Illuminate\Support\Facades\DB;
+
+$max = DB::table('users')->max('votes');
+```
+In this example, the `max` method returns the highest `votes` value from the `users` table.
+
+Min
+
+use Illuminate\Support\Facades\DB;
+
+$min = DB::table('users')->min('votes');
+
+In this example, the `min` method returns the lowest `votes` value from the `users` table.
+
+Sum
+
+use Illuminate\Support\Facades\DB;
+
+$sum = DB::table('users')->sum('votes');
+
+In this example, the `sum` method returns the sum of all `votes` values in the `users` table.
+
+Average
+
+use Illuminate\Support\Facades\DB;
+
+$average = DB::table('users')->average('votes');
+
+In this example, the `average` method returns the average of all `votes` values in the `users` table.
+
+Remember, Laravel's query builder uses PDO parameter binding to protect your application against SQL injection attacks. There is no need to clean strings being passed as bindings.
+
