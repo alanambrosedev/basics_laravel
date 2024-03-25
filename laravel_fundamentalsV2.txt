@@ -1827,13 +1827,12 @@ Sure, here's how you can configure Mailtrap in Laravel 10:
 
 **1. Create a Mailtrap Account**
 
-First, you need to create an account on [Mailtrap](https://mailtrap.io/). After signing up, create a new inbox. Mailtrap will provide you with SMTP settings, including the host, port, username, and password¹.
+First, you need to create an account on [Mailtrap](https://mailtrap.io/). After signing up, create a new inbox. Mailtrap will provide you with SMTP settings, including the host, port, username, and password.
 
 **2. Configure .env File**
 
 Next, you need to update your `.env` file in your Laravel project with the SMTP settings provided by Mailtrap¹². Here's an example of how to do this:
 
-```bash
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.mailtrap.io
 MAIL_PORT=2525
@@ -1842,15 +1841,14 @@ MAIL_PASSWORD=your_mailtrap_password
 MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS=example@example.com
 MAIL_FROM_NAME="${APP_NAME}"
-```
 
-In this example, replace `your_mailtrap_username` and `your_mailtrap_password` with your actual Mailtrap SMTP username and password¹².
+In this example, replace `your_mailtrap_username` and `your_mailtrap_password` with your actual Mailtrap SMTP username and password.
 
 **3. Send a Test Email**
 
-Now that you've configured Mailtrap, you can send a test email to verify that everything is working correctly. You can do this by creating a mailable class using the `make:mail` Artisan command and defining a route that sends an email using this mailable class¹.
+Now that you've configured Mailtrap, you can send a test email to verify that everything is working correctly. You can do this by creating a mailable class using the `make:mail` Artisan command and defining a route that sends an email using this mailable class.
 
-That's it! Now, every time you send an email in your Laravel application during development, it will be sent to your Mailtrap inbox instead of the actual recipient. This allows you to view and inspect the emails in a safe and isolated environment¹.
+That's it! Now, every time you send an email in your Laravel application during development, it will be sent to your Mailtrap inbox instead of the actual recipient. This allows you to view and inspect the emails in a safe and isolated environment.
 
 Sending simple mail 
 -------------------
@@ -1861,17 +1859,14 @@ Sure, here's how you can send a simple email in Laravel 10:
 
 First, you need to create a mailable class. This class will represent the email you're going to send. You can create a mailable class using the `make:mail` Artisan command¹:
 
-```bash
 php artisan make:mail SampleEmail
-```
 
 This command will create a new class at `app\Mail\SampleEmail.php`.
 
 **2. Write the Mailable**
 
-Next, you need to write the content of the email in the mailable class. Here's an example of how to do this¹:
+Next, you need to write the content of the email in the mailable class. Here's an example of how to do this:
 
-```php
 <?php
 
 namespace App\Mail;
@@ -1890,7 +1885,6 @@ class SampleEmail extends Mailable
         return $this->view('emails.sample');
     }
 }
-```
 
 In this example, the `view('emails.sample')` method is used to specify the Blade view that should be used as the content of the email.
 
@@ -1898,7 +1892,6 @@ In this example, the `view('emails.sample')` method is used to specify the Blade
 
 Then, you need to create the Blade view that will be used as the content of the email. You can create this view at `resources\views\emails\sample.blade.php`. Here's an example of what this view might look like¹:
 
-```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -1909,13 +1902,11 @@ Then, you need to create the Blade view that will be used as the content of the 
     <p>This is a sample email sent from Laravel.</p>
 </body>
 </html>
-```
 
 **4. Send the Email**
 
-Finally, you can send the email using the `Mail` facade's `send` method. Here's an example of how to do this¹:
+Finally, you can send the email using the `Mail` facade's `send` method. Here's an example of how to do this:
 
-```php
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SampleEmail;
@@ -1925,11 +1916,10 @@ Route::get('/send-email', function () {
 
     return "Email sent successfully!";
 });
-```
 
-In this example, the `Mail::to('recipient@example.com')->send(new SampleEmail());` line is used to send an email to `recipient@example.com` using the `SampleEmail` mailable class¹.
+In this example, the `Mail::to('recipient@example.com')->send(new SampleEmail());` line is used to send an email to `recipient@example.com` using the `SampleEmail` mailable class.
 
-That's it! Now, every time you visit the `/send-email` route in your Laravel application, it will send a sample email¹.
+That's it! Now, every time you visit the `/send-email` route in your Laravel application, it will send a sample email.
 
 Sending view as email body
 --------------------------
@@ -1938,19 +1928,16 @@ Sure, here's how you can send an email with a view as the body in Laravel 10:
 
 **1. Create a Mailable**
 
-First, you need to create a mailable class. This class will represent the email you're going to send. You can create a mailable class using the `make:mail` Artisan command¹:
+First, you need to create a mailable class. This class will represent the email you're going to send. You can create a mailable class using the `make:mail` Artisan command:
 
-```bash
 php artisan make:mail SampleEmail
-```
 
 This command will create a new class at `app\Mail\SampleEmail.php`.
 
 **2. Write the Mailable**
 
-Next, you need to write the content of the email in the mailable class. Here's an example of how to do this¹:
+Next, you need to write the content of the email in the mailable class. Here's an example of how to do this:
 
-```php
 <?php
 
 namespace App\Mail;
@@ -1969,7 +1956,6 @@ class SampleEmail extends Mailable
         return $this->view('emails.sample');
     }
 }
-```
 
 In this example, the `view('emails.sample')` method is used to specify the Blade view that should be used as the content of the email.
 
@@ -1977,7 +1963,6 @@ In this example, the `view('emails.sample')` method is used to specify the Blade
 
 Then, you need to create the Blade view that will be used as the content of the email. You can create this view at `resources\views\emails\sample.blade.php`. Here's an example of what this view might look like¹:
 
-```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -1988,13 +1973,11 @@ Then, you need to create the Blade view that will be used as the content of the 
     <p>This is a sample email sent from Laravel.</p>
 </body>
 </html>
-```
 
 **4. Send the Email**
 
-Finally, you can send the email using the `Mail` facade's `send` method. Here's an example of how to do this¹:
+Finally, you can send the email using the `Mail` facade's `send` method. Here's an example of how to do this:
 
-```php
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SampleEmail;
@@ -2004,9 +1987,8 @@ Route::get('/send-email', function () {
 
     return "Email sent successfully!";
 });
-```
 
-In this example, the `Mail::to('recipient@example.com')->send(new SampleEmail());` line is used to send an email to `recipient@example.com` using the `SampleEmail` mailable class¹.
+In this example, the `Mail::to('recipient@example.com')->send(new SampleEmail());` line is used to send an email to `recipient@example.com` using the `SampleEmail` mailable class.
 
 Attaching Files to email
 ------------------------
@@ -2015,19 +1997,16 @@ Sure, here's how you can attach files to an email in Laravel 10:
 
 **1. Create a Mailable**
 
-First, you need to create a mailable class. This class will represent the email you're going to send. You can create a mailable class using the `make:mail` Artisan command¹:
+First, you need to create a mailable class. This class will represent the email you're going to send. You can create a mailable class using the `make:mail` Artisan command:
 
-```bash
 php artisan make:mail MailWithAttachment
-```
 
 This command will create a new class at `app\Mail\MailWithAttachment.php`.
 
 **2. Write the Mailable**
 
-Next, you need to write the content of the email in the mailable class. Here's an example of how to do this¹:
+Next, you need to write the content of the email in the mailable class. Here's an example of how to do this:
 
-```php
 <?php
 
 namespace App\Mail;
@@ -2054,15 +2033,13 @@ class MailWithAttachment extends Mailable
                     ->attach($this->data['attachment']);
     }
 }
-```
 
 In this example, the `attach($this->data['attachment'])` method is used to attach a file to the email. The `$this->data['attachment']` should be the full path to the file you want to attach¹.
 
 **3. Send the Email**
 
-Finally, you can send the email using the `Mail` facade's `send` method. Here's an example of how to do this¹:
+Finally, you can send the email using the `Mail` facade's `send` method. Here's an example of how to do this:
 
-```php
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MailWithAttachment;
@@ -2076,11 +2053,10 @@ Route::get('/send-email', function () {
 
     return "Email sent successfully!";
 });
-```
 
-In this example, the `Mail::to('recipient@example.com')->send(new MailWithAttachment($data));` line is used to send an email to `recipient@example.com` using the `MailWithAttachment` mailable class¹.
+In this example, the `Mail::to('recipient@example.com')->send(new MailWithAttachment($data));` line is used to send an email to `recipient@example.com` using the `MailWithAttachment` mailable class.
 
-That's it! Now, every time you visit the `/send-email` route in your Laravel application, it will send an email with an attachment¹.
+That's it! Now, every time you visit the `/send-email` route in your Laravel application, it will send an email with an attachment.
 
 Http session
 ============
@@ -2092,34 +2068,28 @@ Sure, here's how you can retrieve data from a session in Laravel 10:
 
 **1. Using the `session()` Helper**
 
-The `session()` helper function provides a convenient way to get data from the session. Here's an example¹:
+The `session()` helper function provides a convenient way to get data from the session. Here's an example:
 
-```php
 $value = session('key');
-```
 
-In this example, `'key'` is the key of the data you want to retrieve from the session. The `session('key')` will return the value of the data stored in the session with the key `'key'`¹.
+In this example, `'key'` is the key of the data you want to retrieve from the session. The `session('key')` will return the value of the data stored in the session with the key `'key'`.
 
 **2. Using the `get()` Method**
 
-You can also use the `get()` method on a `Request` instance to retrieve data from the session. Here's an example¹:
+You can also use the `get()` method on a `Request` instance to retrieve data from the session. Here's an example:
 
-```php
 public function show(Request $request, $id)
 {
     $value = $request->session()->get('key');
 }
-```
 
-In this example, `$request->session()->get('key')` will return the value of the data stored in the session with the key `'key'`¹.
+In this example, `$request->session()->get('key')` will return the value of the data stored in the session with the key `'key'`.
 
 **3. Providing a Default Value**
 
-If you're not sure whether a certain item is available in the session, you can pass a default value to the `get()` method or the `session()` helper function. This value will be returned if the specified key does not exist in the session¹. Here's an example:
+If you're not sure whether a certain item is available in the session, you can pass a default value to the `get()` method or the `session()` helper function. This value will be returned if the specified key does not exist in the session. Here's an example:
 
-```php
 $value = session('key', 'default');
-```
 
 In this example, `'default'` is the default value that will be returned if `'key'` does not exist in the session¹.
 
@@ -2131,38 +2101,32 @@ Sure, here's how you can store data in a session in Laravel 10:
 
 **1. Using the `session()` Helper**
 
-The `session()` helper function provides a convenient way to store data in the session. Here's an example¹:
+The `session()` helper function provides a convenient way to store data in the session. Here's an example:
 
-```php
 // Store data in the session
 session(['key' => 'value']);
-```
 
-In this example, `'key'` is the key under which the data `'value'` is stored in the session¹.
+In this example, `'key'` is the key under which the data `'value'` is stored in the session.
 
 **2. Using the `put()` Method**
 
-You can also use the `put()` method on a `Request` instance to store data in the session. Here's an example¹:
+You can also use the `put()` method on a `Request` instance to store data in the session. Here's an example:
 
-```php
 public function store(Request $request)
 {
     $request->session()->put('key', 'value');
 }
-```
 
-In this example, `$request->session()->put('key', 'value')` is used to store the data `'value'` in the session with the key `'key'`¹.
+In this example, `$request->session()->put('key', 'value')` is used to store the data `'value'` in the session with the key `'key'`.
 
 **3. Storing Array Data**
 
-You can store an array of data in the session. Here's an example¹:
+You can store an array of data in the session. Here's an example:
 
-```php
 // Store array data in the session
 session(['key' => ['item1', 'item2']]);
-```
 
-In this example, `'key'` is the key under which the array `['item1', 'item2']` is stored in the session¹.
+In this example, `'key'` is the key under which the array `['item1', 'item2']` is stored in the session.
 
 Deleting data from session
 --------------------------
@@ -2171,46 +2135,37 @@ Sure, here's how you can delete data from a session in Laravel 10:
 
 **1. Using the `session()` Helper**
 
-The `session()` helper function provides a convenient way to delete data from the session. Here's an example³:
+The `session()` helper function provides a convenient way to delete data from the session. Here's an example:
 
-```php
 // Delete a specific key from the session
 session()->forget('key');
-```
 
-In this example, `'key'` is the key of the data you want to delete from the session³.
+In this example, `'key'` is the key of the data you want to delete from the session.
 
 **2. Using the `forget()` Method**
 
-You can also use the `forget()` method on a `Request` instance to delete data from the session. Here's an example¹:
+You can also use the `forget()` method on a `Request` instance to delete data from the session. Here's an example:
 
-```php
 public function delete(Request $request)
 {
     $request->session()->forget('key');
 }
-```
 
-In this example, `$request->session()->forget('key')` is used to delete the data stored in the session with the key `'key'`¹.
+In this example, `$request->session()->forget('key')` is used to delete the data stored in the session with the key `'key'`.
 
 **3. Deleting All Data From The Session**
 
-If you want to delete all data from the session, you can use the `flush()` method¹:
+If you want to delete all data from the session, you can use the `flush()` method:
 
-```php
 // Delete all data from the session
 session()->flush();
-```
 
 Or, if you're inside a controller method¹:
 
-```php
 public function deleteAll(Request $request)
 {
     $request->session()->flush();
 }
-```
-
 
 Flash session data
 ------------------
@@ -2219,38 +2174,32 @@ Flashing data to the session in Laravel 10 is a way to store data in the session
 
 **1. Using the `session()` Helper**
 
-The `session()` helper function provides a convenient way to flash data to the session. Here's an example³:
+The `session()` helper function provides a convenient way to flash data to the session. Here's an example:
 
-```php
 // Flash data to the session
 session()->flash('key', 'value');
-```
 
-In this example, `'key'` is the key under which the data `'value'` is flashed to the session³.
+In this example, `'key'` is the key under which the data `'value'` is flashed to the session.
 
 **2. Using the `flash()` Method**
 
-You can also use the `flash()` method on a `Request` instance to flash data to the session. Here's an example¹:
+You can also use the `flash()` method on a `Request` instance to flash data to the session. Here's an example:
 
-```php
 public function store(Request $request)
 {
     $request->session()->flash('key', 'value');
 }
-```
 
-In this example, `$request->session()->flash('key', 'value')` is used to flash the data `'value'` to the session with the key `'key'`¹.
+In this example, `$request->session()->flash('key', 'value')` is used to flash the data `'value'` to the session with the key `'key'`.
 
 **3. Flashing Array Data**
 
-You can flash an array of data to the session. Here's an example³:
+You can flash an array of data to the session. Here's an example:
 
-```php
 // Flash array data to the session
 session()->flash('key', ['item1', 'item2']);
-```
 
-In this example, `'key'` is the key under which the array `['item1', 'item2']` is flashed to the session³.
+In this example, `'key'` is the key under which the array `['item1', 'item2']` is flashed to the session.
 
 Cache
 =====
@@ -2261,51 +2210,43 @@ In Laravel, both sessions and cache are used to store data, but they serve diffe
 
 **Session:**
 
-- A session is a way to store information to be used across multiple pages³.
-- Session data is stored on a per-user basis. It's a way to remember the user's activity from page to page by storing user information on the server for later use³.
-- For example, if a user is logged in, you can store that information in the session and use it to determine if the user is authenticated on subsequent requests³.
-- Session data is temporary and is deleted when the user closes the browser or after a certain period of inactivity³.
+- A session is a way to store information to be used across multiple pages.
+- Session data is stored on a per-user basis. It's a way to remember the user's activity from page to page by storing user information on the server for later use.
+- For example, if a user is logged in, you can store that information in the session and use it to determine if the user is authenticated on subsequent requests.
+- Session data is temporary and is deleted when the user closes the browser or after a certain period of inactivity.
 
-Here's an example of how to store data in a session in Laravel³:
+Here's an example of how to store data in a session in Laravel:
 
-```php
 // Store data in the session
 session(['key' => 'value']);
-```
 
-And here's how to retrieve data from a session³:
+And here's how to retrieve data from a session:
 
-```php
 // Retrieve data from the session
 $value = session('key');
-```
 
 **Cache:**
 
-- The cache is a way to store data that can be retrieved faster than if it were accessed directly¹.
-- Cache data is not tied to a specific user. It's a way to store data that is expensive to retrieve or generate, such as the results of a database query or a complex calculation¹.
-- Unlike session data, cache data is not automatically deleted when the user closes the browser. It's deleted when it expires, when it's manually deleted, or when the cache is cleared¹.
-- Laravel provides a unified API for various caching systems. The cache configuration is located at `config/cache.php`¹.
+- The cache is a way to store data that can be retrieved faster than if it were accessed directly.
+- Cache data is not tied to a specific user. It's a way to store data that is expensive to retrieve or generate, such as the results of a database query or a complex calculation.
+- Unlike session data, cache data is not automatically deleted when the user closes the browser. It's deleted when it expires, when it's manually deleted, or when the cache is cleared.
+- Laravel provides a unified API for various caching systems. The cache configuration is located at `config/cache.php`.
 
-Here's an example of how to store data in the cache in Laravel¹:
+Here's an example of how to store data in the cache in Laravel:
 
-```php
 use Illuminate\Support\Facades\Cache;
 
 // Store data in the cache
 Cache::put('key', 'value', $seconds);
-```
 
 And here's how to retrieve data from the cache¹:
 
-```php
 use Illuminate\Support\Facades\Cache;
 
 // Retrieve data from the cache
 $value = Cache::get('key');
-```
 
-In summary, while both sessions and cache can be used to store data, sessions are typically used to store user-specific data across multiple pages, while cache is used to store data that is expensive to generate or retrieve and is not user-specific¹³.
+In summary, while both sessions and cache can be used to store data, sessions are typically used to store user-specific data across multiple pages, while cache is used to store data that is expensive to generate or retrieve and is not user-specific.
 
 Installing debugbar
 -------------------
@@ -2313,36 +2254,30 @@ Sure, here's how you can install and set up Laravel Debugbar in Laravel 10:
 
 **1. Install Laravel Debugbar Package**
 
-Open terminal and navigate to the project's root directory. Install the package by running the following command¹:
+Open terminal and navigate to the project's root directory. Install the package by running the following command:
 
-```bash
 composer require barryvdh/laravel-debugbar --dev
-```
 
-This command will install the Laravel Debugbar package as a development dependency¹.
+This command will install the Laravel Debugbar package as a development dependency.
 
 **2. Register the Debugbar Service Provider**
 
-Open the `config/app.php` file in your project. Locate the `providers` array. Add the service provider class in the array¹:
+Open the `config/app.php` file in your project. Locate the `providers` array. Add the service provider class in the array:
 
-```php
 'providers' => [
     ...
     Barryvdh\Debugbar\ServiceProvider::class,
 ]
-```
 
 **3. Publish the Configuration (optional)**
 
-You can generate a `debugbar.php` configuration file in the `config` directory by running this command¹:
+You can generate a `debugbar.php` configuration file in the `config` directory by running this command:
 
-```bash
 php artisan vendor:publish --provider="Barryvdh\Debugbar\ServiceProvider"
-```
 
 **4. Verify the Installation**
 
-Now, you should be able to see a debug bar at the bottom of your application when you're in the local environment. This debug bar will provide you with a wealth of information about what's happening in your application¹.
+Now, you should be able to see a debug bar at the bottom of your application when you're in the local environment. This debug bar will provide you with a wealth of information about what's happening in your application.
 
 Storing data in cache
 ---------------------
@@ -2350,43 +2285,37 @@ In Laravel 10, you can store data in the cache using various methods. Here's how
 
 **1. Using the `put()` Method**
 
-The `put()` method allows you to store an item in the cache for a specified number of seconds¹. Here's an example:
+The `put()` method allows you to store an item in the cache for a specified number of seconds. Here's an example:
 
-```php
 use Illuminate\Support\Facades\Cache;
 
 // Store an item in the cache for 10 seconds
 Cache::put('key', 'value', 10);
-```
 
-In this example, `'key'` is the key under which the data `'value'` is stored in the cache for 10 seconds¹.
+In this example, `'key'` is the key under which the data `'value'` is stored in the cache for 10 seconds.
 
 **2. Using the `remember()` Method**
 
-The `remember()` method allows you to retrieve an item from the cache or store it if it doesn't exist¹. Here's an example:
+The `remember()` method allows you to retrieve an item from the cache or store it if it doesn't exist. Here's an example:
 
-```php
 use Illuminate\Support\Facades\Cache;
 
 $value = Cache::remember('users', $seconds, function () {
     return DB::table('users')->get();
 });
-```
 
-In this example, if there's no item in the cache with the key `'users'`, the closure passed as the third argument to the `remember()` method will be executed and its result will be stored in the cache under the key `'users'`¹.
+In this example, if there's no item in the cache with the key `'users'`, the closure passed as the third argument to the `remember()` method will be executed and its result will be stored in the cache under the key `'users'`.
 
 **3. Using the `forever()` Method**
 
 The `forever()` method allows you to store an item in the cache indefinitely¹. Here's an example:
 
-```php
 use Illuminate\Support\Facades\Cache;
 
 // Store an item in the cache indefinitely
 Cache::forever('key', 'value');
-```
 
-In this example, `'key'` is the key under which the data `'value'` is stored in the cache indefinitely¹.
+In this example, `'key'` is the key under which the data `'value'` is stored in the cache indefinitely.
 
 Storing data in cache forever
 -----------------------------
@@ -2396,30 +2325,26 @@ In Laravel 10, you can store data in the cache indefinitely using the `forever()
 
 The `forever()` method allows you to store an item in the cache indefinitely¹. Here's an example:
 
-```php
 use Illuminate\Support\Facades\Cache;
 
 // Store an item in the cache indefinitely
 Cache::forever('key', 'value');
-```
 
-In this example, `'key'` is the key under which the data `'value'` is stored in the cache indefinitely¹.
+In this example, `'key'` is the key under which the data `'value'` is stored in the cache indefinitely.
 
 **2. Using the `rememberForever()` Method**
 
-The `rememberForever()` method allows you to retrieve an item from the cache or store it indefinitely if it doesn't exist³. Here's an example:
+The `rememberForever()` method allows you to retrieve an item from the cache or store it indefinitely if it doesn't exist. Here's an example:
 
-```php
 use Illuminate\Support\Facades\Cache;
 
 $value = Cache::rememberForever('users', function () {
     return DB::table('users')->get();
 });
-```
 
-In this example, if there's no item in the cache with the key `'users'`, the closure passed as the second argument to the `rememberForever()` method will be executed and its result will be stored in the cache indefinitely under the key `'users'`³.
+In this example, if there's no item in the cache with the key `'users'`, the closure passed as the second argument to the `rememberForever()` method will be executed and its result will be stored in the cache indefinitely under the key `'users'`.
 
-These are the basic steps to store data in the cache indefinitely in Laravel 10¹³. For more complex use cases, you might want to look into tagged cache and cache stores¹.
+These are the basic steps to store data in the cache indefinitely in Laravel 10¹³. For more complex use cases, you might want to look into tagged cache and cache stores.
 
 
 Remove data in cache
@@ -2429,57 +2354,45 @@ In Laravel 10, you can remove data from the cache using various methods. Here's 
 
 **1. Using the `forget()` Method**
 
-The `forget()` method allows you to remove a specific item from the cache. Here's an example¹:
+The `forget()` method allows you to remove a specific item from the cache. Here's an example:
 
-```php
 use Illuminate\Support\Facades\Cache;
 
 // Remove a specific item from the cache
 Cache::forget('key');
-```
 
-In this example, `'key'` is the key of the item you want to remove from the cache¹.
+In this example, `'key'` is the key of the item you want to remove from the cache.
 
 **2. Using the `flush()` Method**
 
-The `flush()` method allows you to clear the entire cache. Here's an example¹:
+The `flush()` method allows you to clear the entire cache. Here's an example:
 
-```php
 use Illuminate\Support\Facades\Cache;
 
 // Clear the entire cache
 Cache::flush();
-```
 
-This command will remove all items from the cache¹.
+This command will remove all items from the cache.
 
 **3. Using Artisan Commands**
 
-You can also use Artisan commands to clear various types of cached data in Laravel⁴:
+You can also use Artisan commands to clear various types of cached data in Laravel:
 
-- **Configuration Cache**: You can clear the configuration cache using the `config:clear` command⁴:
+- **Configuration Cache**: You can clear the configuration cache using the `config:clear` command:
 
-    ```bash
     php artisan config:clear
-    ```
 
-- **Route Cache**: You can clear the route cache using the `route:clear` command⁴:
+- **Route Cache**: You can clear the route cache using the `route:clear` command:
 
-    ```bash
     php artisan route:clear
-    ```
 
-- **View Cache**: You can clear the compiled view files using the `view:clear` command⁴:
+- **View Cache**: You can clear the compiled view files using the `view:clear` command:
 
-    ```bash
     php artisan view:clear
-    ```
 
-- **Application Cache**: You can clear the application cache using the `cache:clear` command⁴:
+- **Application Cache**: You can clear the application cache using the `cache:clear` command:
 
-    ```bash
     php artisan cache:clear
-    ```
 
 Using cache with pagination
 ---------------------------
@@ -2488,9 +2401,8 @@ In Laravel 10, you can use caching with pagination to improve the performance of
 
 **1. Fetching Data with Pagination**
 
-First, you need to fetch data with pagination. Here's an example³:
+First, you need to fetch data with pagination. Here's an example:
 
-```php
 use Illuminate\Support\Facades\Cache;
 
 public function index()
@@ -2504,15 +2416,14 @@ public function index()
 
     return view('users.index', compact('users'));
 }
-```
 
-In this example, the `DB::table('users')->paginate($limit)` is used to fetch users from the database with pagination³.
+In this example, the `DB::table('users')->paginate($limit)` is used to fetch users from the database with pagination.
 
 **2. Caching the Paginated Data**
 
-Next, you use the `Cache::remember()` method to cache the paginated data. The `Cache::remember()` method takes three arguments: the cache key, the number of minutes to store the data, and a closure that returns the data to be cached³.
+Next, you use the `Cache::remember()` method to cache the paginated data. The `Cache::remember()` method takes three arguments: the cache key, the number of minutes to store the data, and a closure that returns the data to be cached.
 
-In this example, `'users_page_' . $currentPage` is the cache key, `60` is the number of minutes to store the data, and the closure returns the paginated data³.
+In this example, `'users_page_' . $currentPage` is the cache key, `60` is the number of minutes to store the data, and the closure returns the paginated data.
 
-This way, the paginated data is cached for each page. When a user visits a page, Laravel first checks if the data for that page is in the cache. If it is, Laravel retrieves the data from the cache instead of the database, which can significantly improve the performance of your application³.
+This way, the paginated data is cached for each page. When a user visits a page, Laravel first checks if the data for that page is in the cache. If it is, Laravel retrieves the data from the cache instead of the database, which can significantly improve the performance of your application.
 .
